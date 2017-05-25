@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Elisi02
 {
@@ -21,7 +22,7 @@ namespace Elisi02
             _view.Run();
         }
 
-        public void LoadCommands()
+        public async void LoadCommands()
         {
             var existing = true;
             if (!File.Exists(_view.CommandsFilePath))
@@ -43,12 +44,17 @@ namespace Elisi02
 
             try
             {
-                _view.LoadCommands(_project.GetCommands());
+                 await _view.LoadCommandsAsync(await _project.GetCommandsAsync());
             }
             catch (Exception ex)
             {
                 _view.RaiseException(ex);
             }
         }
+
+        //public async void LoadCommandsAsync()
+        //{
+        //    await Task.Run(()=> LoadCommands());
+        //}
     }
 }

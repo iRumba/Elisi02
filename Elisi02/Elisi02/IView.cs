@@ -1,6 +1,7 @@
 ﻿using Elisi02.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Elisi02
 {
@@ -10,7 +11,7 @@ namespace Elisi02
         string CommandsFilePath { get; }
         string StatesFilePath { get; }
         void Run();
-        void LoadCommands(IEnumerable<Command> commands);
+        Task LoadCommandsAsync(IEnumerable<Command> commands);
         void SetCommandsFileError(string msg);
         void SetStatesFileError(string msg);
         void RaiseException(Exception ex);

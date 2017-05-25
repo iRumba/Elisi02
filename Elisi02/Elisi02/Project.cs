@@ -4,6 +4,7 @@ using System.Linq;
 using Elisi02.Models;
 using System.Xml.Serialization;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Elisi02
 {
@@ -61,10 +62,21 @@ namespace Elisi02
             return DeserializeXmlCollection<Command>("commands", _commandsFilePath);
         }
 
+        public void SetFiles(string commands, string states)
+        {
+            _commandsFilePath = commands;
+            _statesFilePath = states;
+        }
+
+        public async Task<IEnumerable<Command>> GetCommandsAsync()
+        {
+            return await Task.Run(() => GetCommands());
+        }
+
         IEnumerable<T> DeserializeXmlCollection<T>(string collectionName, string filePath)
         {
             IEnumerable<T> res;
-            
+
             var xml = new XmlSerializer(typeof(T[]), new XmlRootAttribute(collectionName));
             using (var stream = new FileStream(filePath, FileMode.Open))
             {
@@ -73,10 +85,9 @@ namespace Elisi02
             return res;
         }
 
-        public void SetFiles(string commands, string states)
+        public async Task<CommandResults> GetCommandResultAsync(Command command)
         {
-            _commandsFilePath = commands;
-            _statesFilePath = states;
+            return await Task.Run(() => GetCommandResult(command));
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Elisi02
@@ -61,43 +62,48 @@ namespace Elisi02
             }
         }
 
-        public void LoadCommands(IEnumerable<Command> commands)
+        public async Task LoadCommandsAsync(IEnumerable<Command> commands)
         {
+            lstCommands.Items.Clear();
             foreach (var command in commands)
             {
                 var val = command.Value.ToString();
                 string result = string.Empty;
-                try
+                await Task.Run(() => 
                 {
-                    switch (GetCommandResult?.Invoke(command))
+                    try
                     {
-                        case CommandResults.SwitchedOn:
-                            result = "Включен";
-                            break;
-                        case CommandResults.SwitchedOff:
-                            result = "Выключен";
-                            break;
-                        case CommandResults.LowPressure:
-                            result = "Не включен (низкое давление)";
-                            break;
-                        case CommandResults.LowVoltage:
-                            result = "Не включен (отсутствует напряжение)";
-                            break;
-                        case CommandResults.None:
-                            result = "Результат не был записан в файл";
-                            break;
-                        case CommandResults.Unknown:
-                            result = "Результат выполнения не ясен";
-                            break;
-                        default:
-                            result = "Ошибка: Представление не настроено";
-                            break;
+                        switch (GetCommandResult?.Invoke(command))
+                        {
+                            case CommandResults.SwitchedOn:
+                                result = "Включен";
+                                break;
+                            case CommandResults.SwitchedOff:
+                                result = "Выключен";
+                                break;
+                            case CommandResults.LowPressure:
+                                result = "Не включен (низкое давление)";
+                                break;
+                            case CommandResults.LowVoltage:
+                                result = "Не включен (отсутствует напряжение)";
+                                break;
+                            case CommandResults.None:
+                                result = "Результат не был записан в файл";
+                                break;
+                            case CommandResults.Unknown:
+                                result = "Результат выполнения не ясен";
+                                break;
+                            default:
+                                result = "Ошибка: Представление не настроено";
+                                break;
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    result = $"Ошибка: {ex.Message}";
-                }
+                    catch (Exception ex)
+                    {
+                        result = $"Ошибка: {ex.Message}";
+                    }
+                });
+                
 
                 lstCommands.Items.Add(new ListViewItem(new string[] { command.TimeStamp, val, result }));
             }
